@@ -1,0 +1,52 @@
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Деталі світлини #{{ photo.id }} (@{{ photo.owner.username }})</span>
+        <button type="button" class="btn-close" onclick="document.getElementById('photo-details-panel').innerHTML=''"></button>
+    </div>
+    <div class="card-body">
+        <h6>Трансформація Cloudinary та QR-код</h6>
+        <form class="input-group mb-3"
+              hx-post="/ui/photos/{{ photo.id }}/transform"
+              hx-target="#qr-box"
+              hx-swap="innerHTML">
+            <select name="preset" class="form-select">
+                <option value="grayscale">Чорно-біле (grayscale)</option>
+                <option value="sepia">Сепія (sepia)</option>
+                <option value="thumbnail_300">Мініатюра 300x300</option>
+                <option value="avatar_circle">Круглий портрет</option>
+                <option value="blur_light">Легке розмиття</option>
+            </select>
+            <button type="submit" class="btn btn-outline-dark">Створити QR</button>
+        </form>
+        <div id="qr-box" class="mb-3"></div>
+
+        <hr>
+        <h6>Коментарі</h6>
+        <div class="mb-3">
+        {% for c in photo.comments %}
+            <div class="border rounded p-2 mb-2 d-flex justify-content-between align-items-center">
+                <div>
+                    <b>@{{ c.author.username }}:</b> {{ c.text }}
+                    <div class="text-muted small">{{ c.created_at }}</div>
+                </div>
+                {% if user.role.value in ['moderator', 'admin'] %}
+                    <button class="btn btn-sm btn-danger"
+                            hx-delete="/ui/comments/{{ c.id }}"
+                            hx-target="#photo-details-panel"
+                            hx-swap="innerHTML">Видалити</button>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="text-muted small">Коментарів ще немає.</p>
+        {% endfor %}
+        </div>
+
+        <form class="d-flex gap-2"
+              hx-post="/ui/photos/{{ photo.id }}/comments"
+              hx-target="#photo-details-panel"
+              hx-swap="innerHTML">
+            <input type="text" name="text" class="form-control" placeholder="Написати коментар..." required>
+            <button type="submit" class="btn btn-primary">Надіслати</button>
+        </form>
+    </div>
+</div>

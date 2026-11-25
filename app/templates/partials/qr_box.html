@@ -1,0 +1,14 @@
+<div class="p-2 border rounded bg-light text-center" x-data="{ copied: false }">
+    <p class="small mb-2">
+        Відскануйте QR-код або відкрийте <a href="{{ link.transformed_url }}" target="_blank">трансформоване фото</a>:
+    </p>
+    <div class="mb-2">
+        <img src="{{ qr_endpoint }}" alt="QR Code" style="width:160px;height:160px;">
+    </div>
+    <button type="button"
+            class="btn btn-sm"
+            :class="copied ? 'btn-success' : 'btn-outline-secondary'"
+            @click="navigator.clipboard.writeText('{{ link.transformed_url }}'); copied = true; setTimeout(() => copied = false, 2000)">
+        <span x-text="copied ? 'Посилання скопійовано!' : 'Скопіювати URL фото'"></span>
+    </button>
+</div>
